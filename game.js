@@ -523,9 +523,16 @@ function setupEventHandlers() {
         isDragging = false;
     });
 
-    // Touch-Dragging für Mobilgeräte
+    // Touch-Steuerung für Mobilgeräte (Swipe, Tap & Zwei-Finger-Zoom/Pan)
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+    let touchStartTime = 0;
+
     let touchStartDist = 0;
     let initialScale = 1.0;
+    let isTwoFingerDragging = false;
 
     const getTouchDist = (e) => {
         const dx = e.touches[0].clientX - e.touches[1].clientX;
@@ -535,23 +542,37 @@ function setupEventHandlers() {
 
     container.addEventListener('touchstart', (e) => {
         if (e.target.tagName === 'BUTTON') return;
+        
         if (e.touches.length === 1) {
-            isDragging = true;
-            dragStartX = e.touches[0].clientX - panX;
-            dragStartY = e.touches[0].clientY - panY;
+            isTwoFingerDragging = false;
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            touchEndX = touchStartX;
+            touchEndY = touchStartY;
+            touchStartTime = Date.now();
         } else if (e.touches.length === 2) {
-            isDragging = false;
+            isTwoFingerDragging = true;
             touchStartDist = getTouchDist(e);
             initialScale = scale;
+            
+            const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+            const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+            dragStartX = midX - panX;
+            dragStartY = midY - panY;
         }
     }, { passive: true });
 
     container.addEventListener('touchmove', (e) => {
-        if (e.touches.length === 1 && isDragging) {
-            panX = e.touches[0].clientX - dragStartX;
-            panY = e.touches[0].clientY - dragStartY;
-            applyTransform();
-        } else if (e.touches.length === 2) {
+        if (e.touches.length === 1 && !isTwoFingerDragging) {
+            touchEndX = e.touches[0].clientX;
+            touchEndY = e.touches[0].clientY;
+        } else if (e.touches.length === 2 && isTwoFingerDragging) {
+            // Zoom & Pan gleichzeitig mit 2 Fingern
+            const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+            const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+            panX = midX - dragStartX;
+            panY = midY - dragStartY;
+
             const dist = getTouchDist(e);
             const factor = dist / touchStartDist;
             scale = Math.max(0.2, Math.min(3.0, initialScale * factor));
@@ -559,8 +580,50 @@ function setupEventHandlers() {
         }
     }, { passive: true });
 
-    container.addEventListener('touchend', () => {
-        isDragging = false;
+    container.addEventListener('touchend', (e) => {
+        if (isTwoFingerDragging) {
+            if (e.touches.length < 2) {
+                isTwoFingerDragging = false;
+            }
+            return;
+        }
+
+        // Verarbeite Single-Touch Gesten
+        const elapsedTime = Date.now() - touchStartTime;
+        const dx = touchEndX - touchStartX;
+        const dy = touchEndY - touchStartY;
+        const absX = Math.abs(dx);
+        const absY = Math.abs(dy);
+
+        // 1. Swipe Erkennung (schnelle Bewegung > 30px, < 300ms)
+        if (elapsedTime < 300 && Math.max(absX, absY) > 30) {
+            if (absX > absY) {
+                if (dx > 0) move(1, 0); // rechts
+                else move(-1, 0);       // links
+            } else {
+                if (dy > 0) move(0, 1); // unten
+                else move(0, -1);      // oben
+            }
+        }
+        // 2. Tap Erkennung (kurzes Tippen < 10px, < 250ms)
+        else if (elapsedTime < 250 && Math.max(absX, absY) < 10) {
+            if (player.el) {
+                const rect = player.el.getBoundingClientRect();
+                const playerCenterX = rect.left + rect.width / 2;
+                const playerCenterY = rect.top + rect.height / 2;
+
+                const tapDx = touchEndX - playerCenterX;
+                const tapDy = touchEndY - playerCenterY;
+
+                if (Math.abs(tapDx) > Math.abs(tapDy)) {
+                    if (tapDx > 0) move(1, 0); // rechts vom Spieler getippt
+                    else move(-1, 0);       // links vom Spieler getippt
+                } else {
+                    if (tapDy > 0) move(0, 1); // unterhalb vom Spieler getippt
+                    else move(0, -1);      // oberhalb vom Spieler getippt
+                }
+            }
+        }
     });
 }
 

@@ -22,19 +22,18 @@
 
         body {
             margin: 0;
-            padding: 20px 0;
+            padding: 0;
             background-color: var(--bg-outer);
             display: flex;
             flex-direction: column;
+            justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            overflow-y: auto;
-            overflow-x: hidden;
+            height: 100vh;
+            overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: white;
             user-select: none;
             touch-action: none;
-            box-sizing: border-box;
         }
 
         #game-wrapper {
@@ -196,42 +195,6 @@
             box-shadow: 0 0 0 #2a3a54;
         }
 
-        /* Mobiles Steuerkreuz */
-        #mobile-dpad {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 15px;
-            gap: 5px;
-        }
-        .dpad-row {
-            display: flex;
-            gap: 5px;
-        }
-        .dpad-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: #384d70;
-            border: none;
-            color: white;
-            font-size: 20px;
-            font-weight: bold;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #1a273b;
-        }
-        .dpad-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 0 0 #1a273b;
-        }
-        .dpad-center {
-            width: 50px;
-            height: 50px;
-        }
-
         /* Gewinn-Overlay */
         #overlay {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
@@ -245,102 +208,6 @@
         #overlay p { font-size: 18px; color: #8fa6c9; margin-bottom: 20px; }
 
         .hint { margin-top: 10px; color: #8fa6c9; font-size: 13px; text-align: center; }
-
-        @media (min-width: 1024px) {
-            #mobile-dpad {
-                display: none; /* Auf Desktop-PCs ausblenden */
-            }
-        }
-
-        /* Legende für Spielelemente */
-        #element-legend {
-            width: 95vw;
-            max-width: 1000px;
-            background: rgba(20, 26, 38, 0.9);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            margin-top: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-sizing: border-box;
-        }
-
-        #element-legend h3 {
-            margin-top: 0;
-            color: var(--color-wall);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 8px;
-            font-size: 16px;
-        }
-
-        .legend-section-title {
-            font-size: 13px;
-            color: #8fa6c9;
-            margin: 15px 0 8px 0;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .legend-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 12px;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: rgba(255, 255, 255, 0.03);
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .legend-preview {
-            position: relative;
-            width: 44px;
-            height: 44px;
-            background-color: var(--bg-floor);
-            border-radius: 6px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
-            flex-shrink: 0;
-        }
-
-        .legend-preview .tile, .legend-preview .entity {
-            position: static;
-            width: 32px;
-            height: 32px;
-        }
-
-        .legend-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            overflow: hidden;
-        }
-
-        .legend-name {
-            font-weight: bold;
-            font-size: 13px;
-            color: #ffffff;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .legend-selector {
-            font-family: monospace;
-            font-size: 11px;
-            color: #8fa6c9;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
     </style>
 </head>
 <body>
@@ -369,226 +236,7 @@
         </div>
     </div>
 
-    <!-- Mobiles D-Pad -->
-    <div id="mobile-dpad">
-        <div class="dpad-row">
-            <button class="dpad-btn" onclick="move(0, -1)">▲</button>
-        </div>
-        <div class="dpad-row">
-            <button class="dpad-btn" onclick="move(-1, 0)">◀</button>
-            <div class="dpad-center"></div>
-            <button class="dpad-btn" onclick="move(1, 0)">▶</button>
-        </div>
-        <div class="dpad-row">
-            <button class="dpad-btn" onclick="move(0, 1)">▼</button>
-        </div>
-    </div>
-
     <div class="hint">Tastatur (WASD / Pfeiltasten) | Mausrad zum Zoomen | Ziehen zum Verschieben</div>
-
-    <!-- Spielelemente-Legende -->
-    <div id="element-legend">
-        <h3>Spielelemente & CSS-Klassen</h3>
-        
-        <div class="legend-section-title">Basis-Elemente</div>
-        <div class="legend-grid">
-            <div class="legend-item">
-                <div class="legend-preview">
-                    <div class="entity player" style="position: relative; width: 32px; height: 32px; border-radius: 8px; box-shadow: inset 0 3px 0 rgba(0,0,0,0.3), inset 3px 0 0 rgba(0,0,0,0.3), inset 0 -3px 0 rgba(255,255,255,0.4), inset -3px 0 0 rgba(255,255,255,0.4);">
-                        <div class="eyes"><div class="eye"></div><div class="eye"></div></div>
-                    </div>
-                </div>
-                <div class="legend-info">
-                    <div class="legend-name">Spielfigur</div>
-                    <div class="legend-selector">.entity.player</div>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-preview">
-                    <div class="entity box" style="position: relative; width: 32px; height: 32px; border-radius: 8px; box-shadow: inset 0 3px 0 rgba(0,0,0,0.3), inset 3px 0 0 rgba(0,0,0,0.3), inset 0 -3px 0 rgba(255,255,255,0.4), inset -3px 0 0 rgba(255,255,255,0.4);">
-                        <div class="eyes"><div class="eye"></div><div class="eye"></div></div>
-                    </div>
-                </div>
-                <div class="legend-info">
-                    <div class="legend-name">Kiste (Box)</div>
-                    <div class="legend-selector">.entity.box</div>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-preview">
-                    <div class="tile target red" style="border: 2px dashed var(--color-target-red); border-radius: 8px;"></div>
-                </div>
-                <div class="legend-info">
-                    <div class="legend-name">Ziel Rot</div>
-                    <div class="legend-selector">.tile.target.red</div>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-preview">
-                    <div class="tile target blue" style="border: 2px dashed var(--color-target-blue); border-radius: 8px;"></div>
-                </div>
-                <div class="legend-info">
-                    <div class="legend-name">Ziel Blau</div>
-                    <div class="legend-selector">.tile.target.blue</div>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-preview"></div>
-                <div class="legend-info">
-                    <div class="legend-name">Boden</div>
-                    <div class="legend-selector">#game-board (bg)</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="legend-section-title">Wand-Kombinationen (Autotiling)</div>
-        <div class="legend-grid">
-            <div class="legend-item">
-                <div class="legend-preview">
-                    <div class="tile wall" style="border-radius: 8px; box-shadow: inset 0 3px 0 rgba(0,0,0,0.3), inset 3px 0 0 rgba(0,0,0,0.3), inset 0 -3px 0 rgba(255,255,255,0.4), inset -3px 0 0 rgba(255,255,255,0.4);"></div>
-                </div>
-                <div class="legend-info">
-                    <div class="legend-name">Isoliert</div>
-                    <div class="legend-selector">Kein Nachbar</div>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-preview">
-                    <div class="tile wall" style="border-radius: 8px 8px 0 0; box-shadow: inset 0 3px 0 rgba(0,0,0,0.3), inset 3px 0 0 rgba(0,0,0,0.3), inset -3px 0 0 rgba(255,255,255,0.4);"></div>
-                </div>
-                <div class="legend-info">
-                    <div class="legend-name">Ende Oben</div>
-                    <div class="legend-selector">Nachbar Unten</div>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-preview">
-                    <div class="tile wall" style="border-radius: 0 8px 8px 0; box-shadow: inset 0 3px 0 rgba(0,0,0,0.3), inset 0 -3px 0 rgba(255,255,255,0.4), inset -3px 0 0 rgba(255,255,255,0.4);"></div>
-                </div>
-                <div class="legend-info">
-                    <div class="legend-name">Ende Rechts</div>
-                    <div class="legend-selector">Nachbar Links</div>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-preview">
-                    <div class="tile wall" style="border-radius: 0 0 8px 8px; box-shadow: inset 3px 0 0 rgba(0,0,0,0.3), inset 0 -3px 0 rgba(255,255,255,0.4), inset -3px 0 0 rgba(255,255,255,0.4);"></div>
-                </div>
-                <div class="legend-info">
-                    <div class="legend-name">Ende Unten</div>
-                    <div class="legend-selector">Nachbar Oben</div>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-preview">
-                    <div class="tile wall" style="border-radius: 8px 0 0 8px; box-shadow: inset 0 3px 0 rgba(0,0,0,0.3), inset 3px 0 0 rgba(0,0,0,0.3), inset 0 -3px 0 rgba(255,255,255,0.4);"></div>
-                </div>
-                <div class="legend-info">
-                    <div class="legend-name">Ende Links</div>
-                    <div class="legend-selector">Nachbar Rechts</div>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-preview">
-                    <div class="tile wall" style="border-radius: 0; box-shadow: inset 3px 0 0 rgba(0,0,0,0.3), inset -3px 0 0 rgba(255,255,255,0.4);"></div>
-                </div>
-                <div class="legend-info">
-                    <div class="legend-name">Gerade Vertikal</div>
-                    <div class="legend-selector">Nachbarn Oben/Unten</div>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-preview">
-                    <div class="tile wall" style="border-radius: 0; box-shadow: inset 0 3px 0 rgba(0,0,0,0.3), inset 0 -3px 0 rgba(255,255,255,0.4);"></div>
-                </div>
-                <div class="legend-info">
-                    <div class="legend-name">Gerade Horizontal</div>
-                    <div class="legend-selector">Nachbarn Links/Rechts</div>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-preview">
-                    <div class="tile wall" style="border-radius: 8px 0 0 0; box-shadow: inset 0 3px 0 rgba(0,0,0,0.3), inset 3px 0 0 rgba(0,0,0,0.3);"></div>
-                </div>
-                <div class="legend-info">
-                    <div class="legend-name">Ecke Oben-Links</div>
-                    <div class="legend-selector">Nachbarn Unten/Rechts</div>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-preview">
-                    <div class="tile wall" style="border-radius: 0 8px 0 0; box-shadow: inset 0 3px 0 rgba(0,0,0,0.3), inset -3px 0 0 rgba(255,255,255,0.4); height: 32px; width: 32px;"></div>
-                </div>
-                <div class="legend-info">
-                    <div class="legend-name">Ecke Oben-Rechts</div>
-                    <div class="legend-selector">Nachbarn Unten/Links</div>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-preview">
-                    <div class="tile wall" style="border-radius: 0 0 0 8px; box-shadow: inset 3px 0 0 rgba(0,0,0,0.3), inset 0 -3px 0 rgba(255,255,255,0.4);"></div>
-                </div>
-                <div class="legend-info">
-                    <div class="legend-name">Ecke Unten-Links</div>
-                    <div class="legend-selector">Nachbarn Oben/Rechts</div>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-preview">
-                    <div class="tile wall" style="border-radius: 0 0 8px 0; box-shadow: inset 0 -3px 0 rgba(255,255,255,0.4), inset -3px 0 0 rgba(255,255,255,0.4);"></div>
-                </div>
-                <div class="legend-info">
-                    <div class="legend-name">Ecke Unten-Rechts</div>
-                    <div class="legend-selector">Nachbarn Oben/Links</div>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-preview">
-                    <div class="tile wall" style="border-radius: 0; box-shadow: inset 3px 0 0 rgba(0,0,0,0.3);"></div>
-                </div>
-                <div class="legend-info">
-                    <div class="legend-name">T-Kreuzung Rechts</div>
-                    <div class="legend-selector">Nachb. Oben/Unten/Rechts</div>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-preview">
-                    <div class="tile wall" style="border-radius: 0; box-shadow: inset -3px 0 0 rgba(255,255,255,0.4);"></div>
-                </div>
-                <div class="legend-info">
-                    <div class="legend-name">T-Kreuzung Links</div>
-                    <div class="legend-selector">Nachb. Oben/Unten/Links</div>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-preview">
-                    <div class="tile wall" style="border-radius: 0; box-shadow: inset 0 3px 0 rgba(0,0,0,0.3);"></div>
-                </div>
-                <div class="legend-info">
-                    <div class="legend-name">T-Kreuzung Oben</div>
-                    <div class="legend-selector">Nachb. Links/Rechts/Oben</div>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-preview">
-                    <div class="tile wall" style="border-radius: 0; box-shadow: inset 0 -3px 0 rgba(255,255,255,0.4);"></div>
-                </div>
-                <div class="legend-info">
-                    <div class="legend-name">T-Kreuzung Unten</div>
-                    <div class="legend-selector">Nachb. Links/Rechts/Unten</div>
-                </div>
-            </div>
-            <div class="legend-item">
-                <div class="legend-preview">
-                    <div class="tile wall" style="border-radius: 0; box-shadow: none;"></div>
-                </div>
-                <div class="legend-info">
-                    <div class="legend-name">Kreuzung (Voll)</div>
-                    <div class="legend-selector">4 Nachbarn verbunden</div>
-                </div>
-            </div>
-        </div>
-    </div>
 
 <script src="game.js"></script>
 </body>
