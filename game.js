@@ -287,13 +287,24 @@ function updateEntityStyle(ent, radius, edgeSize) {
         r = isWall(ent.ref.x + 1, ent.ref.y);
         b = isWall(ent.ref.x, ent.ref.y + 1);
         l = isWall(ent.ref.x - 1, ent.ref.y);
-    }
 
-    // Dynamisches Autotiling für weiche Übergänge
-    el.style.borderTopLeftRadius = (t || l) ? '0' : radius;
-    el.style.borderTopRightRadius = (t || r) ? '0' : radius;
-    el.style.borderBottomRightRadius = (b || r) ? '0' : radius;
-    el.style.borderBottomLeftRadius = (b || l) ? '0' : radius;
+        const tl = isWall(ent.ref.x - 1, ent.ref.y - 1);
+        const tr = isWall(ent.ref.x + 1, ent.ref.y - 1);
+        const br = isWall(ent.ref.x + 1, ent.ref.y + 1);
+        const bl = isWall(ent.ref.x - 1, ent.ref.y + 1);
+
+        // Kantenverschmelzung inklusive Innenecken-Abrundung (Autotiling für Wände)
+        el.style.borderTopLeftRadius = ((!t && !l) || (t && l && !tl)) ? radius : '0';
+        el.style.borderTopRightRadius = ((!t && !r) || (t && r && !tr)) ? radius : '0';
+        el.style.borderBottomRightRadius = ((!b && !r) || (b && r && !br)) ? radius : '0';
+        el.style.borderBottomLeftRadius = ((!b && !l) || (b && l && !bl)) ? radius : '0';
+    } else {
+        // Boxen und Spieler behalten immer alle Ecken abgerundet
+        el.style.borderTopLeftRadius = radius;
+        el.style.borderTopRightRadius = radius;
+        el.style.borderBottomRightRadius = radius;
+        el.style.borderBottomLeftRadius = radius;
+    }
 
     // 3D-Schattenwurf (rechts/unten hell, links/oben dunkel)
     const shadows = [];
